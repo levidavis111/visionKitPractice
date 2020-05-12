@@ -7,14 +7,39 @@
 //
 
 import UIKit
+import Vision
+import VisionKit
 
 class ViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        presentScannerVC()
     }
 
-
+    private func presentScannerVC() {
+        let scannerVC = VNDocumentCameraViewController()
+        scannerVC.delegate = self
+        present(scannerVC, animated: true, completion: nil)
+    }
+    
 }
 
+extension ViewController: VNDocumentCameraViewControllerDelegate {
+    
+    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
+        for pageNumber in 0..<scan.pageCount {
+            let image = scan.imageOfPage(at: pageNumber)
+        }
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
+        controller.dismiss(animated: true, completion: nil)
+    }
+    
+    func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
+        print(error)
+        controller.dismiss(animated: true, completion: nil)
+    }
+}

@@ -31,6 +31,7 @@ class ViewController: UIViewController {
     private lazy var scanButton: UIButton = {
         let button = UIButton()
         button.setImage(UIImage(named: "camera-icon"), for: .normal)
+        button.isEnabled = true
         button.addTarget(self, action: #selector(scanButtonPressed), for: .touchUpInside)
         return button
     }()
@@ -44,9 +45,8 @@ class ViewController: UIViewController {
     }
     
     @objc private func scanButtonPressed() {
-        let scannerVC = VNDocumentCameraViewController()
-        scannerVC.delegate = self
-        present(scannerVC, animated: true, completion: nil)
+        print("Scan button pressed")
+        checkCameraPermission()
     }
     
     private func setupVision() {
@@ -101,6 +101,26 @@ class ViewController: UIViewController {
             }
         }
     }
+    
+    private func checkCameraPermission() {
+        let cameraStatus = UIImagePickerController.isCameraDeviceAvailable(.rear)
+        
+        switch cameraStatus {
+        case true:
+            print("Rear camera available")
+            presentScanner()
+        case false:
+            print("Rear camera not available")
+        }
+            
+    }
+    
+    private func presentScanner() {
+        let scannerVC = VNDocumentCameraViewController()
+        scannerVC.delegate = self
+        present(scannerVC, animated: true, completion: nil)
+    }
+    
     private func addSubViews() {
         view.addSubview(imageView)
         view.addSubview(textView)
@@ -161,4 +181,6 @@ extension ViewController: VNDocumentCameraViewControllerDelegate {
         guard let imageData = originalImage.jpegData(compressionQuality: 1), let reloadedImage = UIImage(data: imageData) else {return originalImage}
         return reloadedImage
     }
+    
+    
 }

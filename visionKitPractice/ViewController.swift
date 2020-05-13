@@ -17,22 +17,30 @@ class ViewController: UIViewController {
     
     private lazy var imageView: BoundingBoxImageView = {
         let imageView = BoundingBoxImageView()
+        imageView.image = UIImage(named: "camera-icon")
         return imageView
     }()
     
     private lazy var textView: UITextView = {
         let textView = UITextView()
+        textView.text = "Text will go here."
+        textView.font = UIFont(name: "Futura-Medium", size: 17)
         return textView
     }()
     
     private lazy var scanButton: UIButton = {
         let button = UIButton()
+        button.setImage(UIImage(named: "camera-icon"), for: .normal)
+        button.addTarget(self, action: #selector(scanButtonPressed), for: .touchUpInside)
         return button
     }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .white
         setupVision()
+        addSubViews()
+        constrainSubviews()
     }
     
     @objc private func scanButtonPressed() {
@@ -92,7 +100,40 @@ class ViewController: UIViewController {
             }
         }
     }
+    private func addSubViews() {
+        view.addSubview(imageView)
+        view.addSubview(textView)
+        view.addSubview(scanButton)
+    }
     
+    private func constrainSubviews() {
+        constrainImageView()
+        constrainTextView()
+        constrainScanButton()
+    }
+    
+    private func constrainImageView() {
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        [imageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+         imageView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+         imageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+         imageView.heightAnchor.constraint(equalToConstant: view.safeAreaLayoutGuide.layoutFrame.height * 0.6)].forEach{$0.isActive = true}
+    }
+    
+    private func constrainTextView() {
+        textView.translatesAutoresizingMaskIntoConstraints = false
+        [textView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+         textView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+         textView.topAnchor.constraint(equalTo: imageView.bottomAnchor),
+         textView.bottomAnchor.constraint(equalTo: scanButton.topAnchor)].forEach{$0.isActive = true}
+    }
+    
+    private func constrainScanButton() {
+        scanButton.translatesAutoresizingMaskIntoConstraints = false
+        [scanButton.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+         scanButton.heightAnchor.constraint(equalToConstant: 35),
+         scanButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)].forEach{$0.isActive = true}
+    }
 }
 
 extension ViewController: VNDocumentCameraViewControllerDelegate {

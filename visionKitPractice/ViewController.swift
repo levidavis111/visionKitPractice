@@ -79,6 +79,9 @@ class ViewController: UIViewController {
     private func recognizeTextInImage(_ image: UIImage) {
         guard let cgImage = image.cgImage else {return}
         
+        textView.text = ""
+        scanButton.isEnabled = false
+        
         textRecognitionWorkQueue.async {
             let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
             
@@ -95,10 +98,12 @@ class ViewController: UIViewController {
 extension ViewController: VNDocumentCameraViewControllerDelegate {
     
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
-        for pageNumber in 0..<scan.pageCount {
-            let image = scan.imageOfPage(at: pageNumber)
-        }
+        guard scan.pageCount > 0 else {controller.dismiss(animated: true, completion: nil); return}
+        
+        let originalImage = scan.imageOfPage(at: 0)
+        let fixedImage = reloadedImage(originalImage)
         controller.dismiss(animated: true, completion: nil)
+        processImage(fixedImage)
     }
     
     func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
@@ -108,5 +113,10 @@ extension ViewController: VNDocumentCameraViewControllerDelegate {
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
         print(error)
         controller.dismiss(animated: true, completion: nil)
+    }
+    
+    private func reloadedImage(_ originalImage: UIImage) -> UIImage {
+        guard let imageData = originalImage.jpegData(compressionQuality: 1), let reloadedImage = UIImage(data: imageData) else {return originalImage}
+        return reloadedImage
     }
 }

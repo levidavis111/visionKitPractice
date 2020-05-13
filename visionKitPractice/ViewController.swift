@@ -15,8 +15,8 @@ class ViewController: UIViewController {
     private var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
     private let textRecognitionWorkQueue = DispatchQueue(label: "TextRecognitionQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     
-    private lazy var imageView: UIImageView = {
-        let imageView = UIImageView()
+    private lazy var imageView: BoundingBoxImageView = {
+        let imageView = BoundingBoxImageView()
         return imageView
     }()
     
@@ -33,6 +33,12 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupVision()
+    }
+    
+    @objc private func scanButtonPressed() {
+        let scannerVC = VNDocumentCameraViewController()
+        scannerVC.delegate = self
+        present(scannerVC, animated: true, completion: nil)
     }
     
     private func setupVision() {
@@ -64,6 +70,12 @@ class ViewController: UIViewController {
         textRecognitionRequest.recognitionLevel = .accurate
     }
     
+    private func processImage(_ image: UIImage) {
+        imageView.image = image
+        imageView.removeBoundingBoxes()
+        recognizeTextInImage(image)
+    }
+    
     private func recognizeTextInImage(_ image: UIImage) {
         guard let cgImage = image.cgImage else {return}
         
@@ -76,12 +88,6 @@ class ViewController: UIViewController {
                 print(error)
             }
         }
-    }
-
-    private func presentScannerVC() {
-        let scannerVC = VNDocumentCameraViewController()
-        scannerVC.delegate = self
-        present(scannerVC, animated: true, completion: nil)
     }
     
 }

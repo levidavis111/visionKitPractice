@@ -12,6 +12,8 @@
 		FC845783246B649A00125528 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC845782246B649A00125528 /* ViewController.swift */; };
 		FC845788246B649E00125528 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC845787246B649E00125528 /* Assets.xcassets */; };
 		FC84578B246B649E00125528 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC845789246B649E00125528 /* LaunchScreen.storyboard */; };
+		FC845793246B732900125528 /* BoundingBoxImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC845792246B732900125528 /* BoundingBoxImageView.swift */; };
+		FC845795246B752700125528 /* UIImageView+ImageRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC845794246B752700125528 /* UIImageView+ImageRect.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +24,8 @@
 		FC845787246B649E00125528 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FC84578A246B649E00125528 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FC84578C246B649E00125528 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FC845792246B732900125528 /* BoundingBoxImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoundingBoxImageView.swift; sourceTree = "<group>"; };
+		FC845794246B752700125528 /* UIImageView+ImageRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImageView+ImageRect.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -57,6 +61,8 @@
 				FC84577E246B649A00125528 /* AppDelegate.swift */,
 				FC845780246B649A00125528 /* SceneDelegate.swift */,
 				FC845782246B649A00125528 /* ViewController.swift */,
+				FC845792246B732900125528 /* BoundingBoxImageView.swift */,
+				FC845794246B752700125528 /* UIImageView+ImageRect.swift */,
 				FC845787246B649E00125528 /* Assets.xcassets */,
 				FC845789246B649E00125528 /* LaunchScreen.storyboard */,
 				FC84578C246B649E00125528 /* Info.plist */,
@@ -136,7 +142,9 @@
 			files = (
 				FC845783246B649A00125528 /* ViewController.swift in Sources */,
 				FC84577F246B649A00125528 /* AppDelegate.swift in Sources */,
+				FC845793246B732900125528 /* BoundingBoxImageView.swift in Sources */,
 				FC845781246B649A00125528 /* SceneDelegate.swift in Sources */,
+				FC845795246B752700125528 /* UIImageView+ImageRect.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

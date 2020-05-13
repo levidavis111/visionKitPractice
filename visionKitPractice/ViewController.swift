@@ -72,6 +72,7 @@ class ViewController: UIViewController {
                 self?.scanButton.isEnabled = true
                 self?.textView.text = detectedText
                 self?.textView.flashScrollIndicators()
+                self?.imageView.load(boundingBoxes: boundingBoxes)
             }
         }
         

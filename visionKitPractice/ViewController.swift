@@ -11,10 +11,71 @@ import Vision
 import VisionKit
 
 class ViewController: UIViewController {
+    
+    private var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
+    private let textRecognitionWorkQueue = DispatchQueue(label: "TextRecognitionQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
+    
+    private lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        return imageView
+    }()
+    
+    private lazy var textView: UITextView = {
+        let textView = UITextView()
+        return textView
+    }()
+    
+    private lazy var scanButton: UIButton = {
+        let button = UIButton()
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        presentScannerVC()
+        setupVision()
+    }
+    
+    private func setupVision() {
+        textRecognitionRequest = VNRecognizeTextRequest{(request, error) in
+            guard let observations = request.results as? [VNRecognizedTextObservation] else {return}
+            
+            var detectedText = ""
+            var boundingBoxes = [CGRect]()
+            
+            for observation in observations {
+                guard let topCandidate = observation.topCandidates(1).first else {return}
+                detectedText += topCandidate.string
+                detectedText += "\n"
+                
+                do {
+                    guard let rectangle = try topCandidate.boundingBox(for: topCandidate.string.startIndex..<topCandidate.string.endIndex) else {return}
+                    boundingBoxes.append(rectangle.boundingBox)
+                } catch {
+                    print(error)
+                }
+            }
+            DispatchQueue.main.async {[weak self] in
+                self?.scanButton.isEnabled = true
+                self?.textView.text = detectedText
+                self?.textView.flashScrollIndicators()
+            }
+        }
+        
+        textRecognitionRequest.recognitionLevel = .accurate
+    }
+    
+    private func recognizeTextInImage(_ image: UIImage) {
+        guard let cgImage = image.cgImage else {return}
+        
+        textRecognitionWorkQueue.async {
+            let requestHandler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            
+            do {
+                try requestHandler.perform([self.textRecognitionRequest])
+            } catch {
+                print(error)
+            }
+        }
     }
 
     private func presentScannerVC() {

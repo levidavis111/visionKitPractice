@@ -9,6 +9,7 @@
 import UIKit
 
 extension UIImageView {
+    // Calculates the rect of an image displayed in a `UIImageView` with the `scaleAspectFit` `contentMode`
     var imageRect: CGRect {
         guard let image = image, contentMode == .scaleAspectFit, image.size.width > 0 && image.size.height > 0 else {return bounds}
         

@@ -12,7 +12,10 @@ import VisionKit
 
 class ViewController: UIViewController {
     
+//    Recognition request defined later. Stored globally so it can be resued
     private var textRecognitionRequest = VNRecognizeTextRequest(completionHandler: nil)
+    
+//    Dedicated queue so the work can happen off the main thread.
     private let textRecognitionWorkQueue = DispatchQueue(label: "TextRecognitionQueue", qos: .userInitiated, attributes: [], autoreleaseFrequency: .workItem)
     
     private lazy var imageView: BoundingBoxImageView = {
@@ -43,12 +46,12 @@ class ViewController: UIViewController {
         addSubViews()
         constrainSubviews()
     }
-    
+//    When pressed, checks to see it camera is available. If so, presentd VNDocument controller
     @objc private func scanButtonPressed() {
         print("Scan button pressed")
         checkCameraPermission()
     }
-    
+//    Configures vision recogntion request, with completion handler that is called later
     private func setupVision() {
         textRecognitionRequest = VNRecognizeTextRequest{(request, error) in
             guard let observations = request.results as? [VNRecognizedTextObservation] else {return}
@@ -78,13 +81,13 @@ class ViewController: UIViewController {
         
         textRecognitionRequest.recognitionLevel = .accurate
     }
-    
+//    Sets imageView, removes previous bounding boxes, attemps to reconginze text.
     private func processImage(_ image: UIImage) {
         imageView.image = image
         imageView.removeBoundingBoxes()
         recognizeTextInImage(image)
     }
-    
+//    Converts image, then calls request handler
     private func recognizeTextInImage(_ image: UIImage) {
         guard let cgImage = image.cgImage else {return}
         
@@ -101,7 +104,7 @@ class ViewController: UIViewController {
             }
         }
     }
-    
+//    Checks camera availability. If available, presents VCDocument scanner.
     private func checkCameraPermission() {
         let cameraStatus = UIImagePickerController.isCameraDeviceAvailable(.rear)
         
@@ -114,7 +117,7 @@ class ViewController: UIViewController {
         }
             
     }
-    
+//    Presents VNDocumens scanner.
     private func presentScanner() {
         let scannerVC = VNDocumentCameraViewController()
         scannerVC.delegate = self
@@ -158,7 +161,7 @@ class ViewController: UIViewController {
 }
 
 extension ViewController: VNDocumentCameraViewControllerDelegate {
-    
+//    Tells MainVC what to do when a scan from VNDocument VC is done.
     func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFinishWith scan: VNDocumentCameraScan) {
         guard scan.pageCount > 0 else {controller.dismiss(animated: true, completion: nil); return}
         
@@ -167,7 +170,7 @@ extension ViewController: VNDocumentCameraViewControllerDelegate {
         controller.dismiss(animated: true, completion: nil)
         processImage(fixedImage)
     }
-    
+//    Error handling
     func documentCameraViewControllerDidCancel(_ controller: VNDocumentCameraViewController) {
         controller.dismiss(animated: true, completion: nil)
     }
@@ -176,7 +179,8 @@ extension ViewController: VNDocumentCameraViewControllerDelegate {
         print(error)
         controller.dismiss(animated: true, completion: nil)
     }
-    
+    /// VisionKit currently has a bug where the images returned reference unique files on disk which are deleted after dismissing the VNDocumentCameraViewController.
+    /// To work around this, we have to create a new UIImage from the data of the original image from VisionKit.
     private func reloadedImage(_ originalImage: UIImage) -> UIImage {
         guard let imageData = originalImage.jpegData(compressionQuality: 1), let reloadedImage = UIImage(data: imageData) else {return originalImage}
         return reloadedImage
